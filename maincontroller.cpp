@@ -56,7 +56,7 @@ void MainController::onAuthenticateDone(QNetworkReply* reply)
     QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
 
     // Cannot error to service api
-    if (!(statusCode.isValid() && reply->canReadLine()))
+    if (!(statusCode.isValid()))
     {
         emit login(-1, "Cannot connect to server");
         reply->deleteLater();
@@ -71,9 +71,12 @@ void MainController::onAuthenticateDone(QNetworkReply* reply)
     {
         QByteArray resData = reply->readAll();
         QJsonDocument jsonDoc = QJsonDocument::fromJson(resData);
-        QJsonObject jsonObject = jsonDoc.object();
-        this->m_jwtToken = jsonObject["token"].toString();
-        emit login(1, this->m_jwtToken);
+
+        // write access token to file
+        this->m_jwtToken = jsonDoc.object()["token"].toString();
+        FileIO::writeTokenToFile(QString(TOKEN_FILE), this->m_jwtToken);
+
+        emit login(1, "Login succeed");
     }
     reply->deleteLater();
 }

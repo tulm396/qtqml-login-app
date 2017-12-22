@@ -11,7 +11,10 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
+#include "fileio.h"
+
 #define AUTHEN_URL "http://localhost:8080/users/authenticate"
+#define TOKEN_FILE "./access_token.bin"
 
 class MainController : public QObject
 {
