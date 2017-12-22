@@ -17,7 +17,11 @@ bool FileIO::writeTokenToFile(const QString &fileName, const QString &data)
 QString FileIO::readTokenFromFile(const QString &source)
 {
     QFile file(source);
-    file.open(QFile::ReadOnly);
+
+    if (!file.open(QFile::ReadOnly)) {
+        return "";
+    }
+
     QByteArray data = file.readAll();
     file.close();
     return QString(data);

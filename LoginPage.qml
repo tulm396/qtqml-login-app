@@ -104,7 +104,6 @@ Page {
                     break;
                 case 1:
                     idStackView.push(idPageProfile);
-                    labelTitle.text = qsTr("Hello %1! This is your page!").arg(textFieldUsername.text);
                     break;
             }
         }

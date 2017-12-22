@@ -43,4 +43,8 @@ Page {
             }
         }
     }
+
+    Component.onCompleted: {
+        labelTitle.text = qsTr("Hello! This is your page!");
+    }
 }

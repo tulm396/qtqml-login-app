@@ -57,7 +57,13 @@ ApplicationWindow {
     StackView {
         id: idStackView;
         anchors.fill: parent;
-        initialItem: idPageLogin;
+        initialItem: {
+            if (!idMainController.isUserLoggedIn()) {
+                idPageLogin;
+            } else {
+                idPageProfile;
+            }
+        }
     }
 
     MainController {

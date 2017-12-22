@@ -6,6 +6,9 @@ MainController::MainController(QObject *parent) : QObject(parent)
     m_jwtToken = "";
     m_username = "";
     m_password = "";
+
+    // Read access token
+    m_jwtToken = FileIO::readTokenFromFile(QString(TOKEN_FILE));
 }
 
 QString MainController::getUsername()
@@ -24,7 +27,9 @@ void MainController::userLogin(const QString& u, const QString& p)
 
 bool MainController::isUserLoggedIn()
 {
-    return m_isLoggedIn;
+    if (this->m_jwtToken.isEmpty())
+        return false;
+    return true;
 }
 
 // SLOTS: authenticating
