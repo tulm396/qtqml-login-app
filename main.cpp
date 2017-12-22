@@ -1,6 +1,8 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
+#include "maincontroller.h"
+
 int main(int argc, char *argv[])
 {
 #if defined(Q_OS_WIN)
@@ -8,6 +10,8 @@ int main(int argc, char *argv[])
 #endif
 
     QGuiApplication app(argc, argv);
+
+    qmlRegisterType<MainController>("MainController", 1, 0, "MainController");
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));

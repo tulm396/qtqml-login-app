@@ -1,9 +1,86 @@
-import QtQuick 2.10
-import QtQuick.Window 2.10
+import QtQuick 2.7
+import QtQuick.Controls 2.0
+import QtQuick.Window 2.2
 
-Window {
-    visible: true
-    width: 640
-    height: 480
-    title: qsTr("Hello World")
+import QtQuick.Layouts 1.3
+import QtQuick.Controls.Styles 1.4
+import QtQuick.Controls.Material 2.0
+
+import MainController 1.0
+
+ApplicationWindow {
+    visible: true;
+    width: 1024; minimumWidth: 1024;
+    height: 600; minimumHeight: 600;
+    title: qsTr("TuLM Login App");
+
+    header: ToolBar {
+        Rectangle {
+            anchors.fill: parent;
+            color: "lightgrey";
+
+            RowLayout {
+                anchors.fill: parent;
+                Rectangle {
+                    width: 20;
+                    height: 0;
+                }
+                Label {
+                    id: labelTitle;
+                    horizontalAlignment: Qt.AlignLeft;
+                    verticalAlignment: Qt.AlignVCenter;
+                    Layout.fillWidth: true;
+                    Layout.fillHeight: true;
+                    text: qsTr("Welcome! This is Login page!");
+                }
+                ToolButton {
+                    id: toolButtonLogout;
+                    visible: false;
+                    text: qsTr("Logout");
+                    onClicked: idStackView.pop();
+                }
+            }
+        }
+    }
+
+    LoginPage {
+        id: idPageLogin;
+    }
+
+    ProfilePage {
+        id: idPageProfile;
+    }
+
+    StackView {
+        id: idStackView;
+        anchors.fill: parent;
+        initialItem: LoginPage {
+            onVisibleChanged: {
+                toolButtonLogout.visible = !visible;
+            }
+        }
+    }
+
+    MainController {
+        id: idMainController;
+    }
+
+    Component.onCompleted: {
+        setX(Screen.width / 2 - width / 2);
+        setY(Screen.height / 2 - height / 2);
+    }
+
+//    Connections {
+//        target: idMainController;
+
+//        onLogin: {
+//            if (isSucceed) {
+//                console.log(isSucceed);
+//                idStackView.push(idPageProfile);
+//            } else {
+//                idPageLogin.labelWarningText = "* Wrong Username or Password, try again.";
+//            }
+//        }
+//    }
+
 }
