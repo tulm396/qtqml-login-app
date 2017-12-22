@@ -3,8 +3,6 @@ import QtQuick.Controls 2.2
 Page {
     id: loginPage;
 
-    //property alias labelWarningText: labelWarning.text;
-
     Rectangle {
         anchors.fill: parent;
         anchors.centerIn: parent;
@@ -64,10 +62,13 @@ Page {
                     text: "Login";
                     width: textFieldPassword.width / 2 - 8;
                     onClicked: {
+                        // Check input data
                         if (textFieldUsername.text === "" || textFieldPassword.text === "") {
                             labelWarning.text = "* Username or Password cannot empty.";
                             return;
                         }
+
+                        // Call user log in
                         idMainController.userLogin(textFieldUsername.text, textFieldPassword.text);
                     }
                 }
@@ -82,24 +83,29 @@ Page {
         }
     }
 
+    onVisibleChanged: {
+        toolButtonLogout.visible = !visible;
+        labelWarning.text = " ";
+        textFieldUsername.clear();
+        textFieldPassword.clear();
+    }
+
     Connections {
         target: idMainController;
 
         onLogin: {
-            console.log(flag);
-            console.log(message);
-
-            if (flag === -1) {
-                labelWarning.text = "* Cannot connect to service.";
-                return;
-            }
-
-            if (flag === 1) {
-                idStackView.push(idPageProfile);
-                labelTitle.text = qsTr("Hello " + textFieldUsername.text);
-                labelWarning.text = "* Succeed.";
-            } else {
-                labelWarning.text = "* Wrong Username or Password, try again.";
+            console.log("onLogin: flag " + flag + ", message: " + message);
+            switch (flag) {
+                case -1:
+                    labelWarning.text = "* Cannot connect to service.";
+                    break;
+                case 0:
+                    labelWarning.text = "* Wrong Username or Password, try again.";
+                    break;
+                case 1:
+                    idStackView.push(idPageProfile);
+                    labelTitle.text = qsTr("Hello %1! This is your page!").arg(textFieldUsername.text);
+                    break;
             }
         }
     }

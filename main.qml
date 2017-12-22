@@ -37,7 +37,10 @@ ApplicationWindow {
                     id: toolButtonLogout;
                     visible: false;
                     text: qsTr("Logout");
-                    onClicked: idStackView.pop();
+                    onClicked: {
+                        labelTitle.text = qsTr("Welcome! This is Login page!");
+                        idStackView.pop();
+                    }
                 }
             }
         }
@@ -54,11 +57,7 @@ ApplicationWindow {
     StackView {
         id: idStackView;
         anchors.fill: parent;
-        initialItem: LoginPage {
-            onVisibleChanged: {
-                toolButtonLogout.visible = !visible;
-            }
-        }
+        initialItem: idPageLogin;
     }
 
     MainController {
@@ -69,18 +68,5 @@ ApplicationWindow {
         setX(Screen.width / 2 - width / 2);
         setY(Screen.height / 2 - height / 2);
     }
-
-//    Connections {
-//        target: idMainController;
-
-//        onLogin: {
-//            if (isSucceed) {
-//                console.log(isSucceed);
-//                idStackView.push(idPageProfile);
-//            } else {
-//                idPageLogin.labelWarningText = "* Wrong Username or Password, try again.";
-//            }
-//        }
-//    }
 
 }
