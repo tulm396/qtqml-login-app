@@ -77,11 +77,85 @@ void MainController::onAuthenticateDone(QNetworkReply* reply)
         QByteArray resData = reply->readAll();
         QJsonDocument jsonDoc = QJsonDocument::fromJson(resData);
 
-        // write access token to file
+        /// Write access token to file
+        /// When run app later, it will be check
         this->m_jwtToken = jsonDoc.object()["token"].toString();
         FileIO::writeTokenToFile(QString(TOKEN_FILE), this->m_jwtToken);
 
         emit login(1, "Login succeed");
     }
+    reply->deleteLater();
+}
+
+void MainController::getUserProfile()
+{
+    doGetUserProfile();
+}
+
+void MainController::userLogout()
+{
+    FileIO::deleteTokenFile(TOKEN_FILE);
+    this->m_jwtToken.clear();
+    emit logout();
+}
+
+void MainController::doGetUserProfile()
+{
+    QNetworkRequest request;
+    request.setUrl(QUrl(USER_PROFILE_URL));
+    request.setRawHeader("Authorization", this->m_jwtToken.toLocal8Bit());
+
+    QNetworkAccessManager *restClient = new QNetworkAccessManager(this);
+    connect(restClient, SIGNAL(finished(QNetworkReply*)), this, SLOT(onGetUserProfileDone(QNetworkReply*)), Qt::UniqueConnection);
+    restClient->get(request);
+}
+
+///
+/// SLOTS: when get the profile of user have done
+/// params: reply -> store information after request (statusCode or body of response)
+///
+void MainController::onGetUserProfileDone(QNetworkReply* reply)
+{
+    QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+    QVariantMap data;
+
+    //! Connect to server fail
+    //! If the status code is invalid then
+    //! the client cannot find the server
+    if (!(statusCode.isValid()))
+    {
+        //! code: -1, connect server failed
+        data.insert("message", "Cannot connect to server");
+        emit getProfile(-1, data);
+        reply->deleteLater();
+        return;
+    }
+
+    //! Connect to the server success and
+    //! we can send some request to the server
+    if(statusCode.isValid() && statusCode.value<int>() == 400)
+    {
+        /// Emit if request fail, request sent but
+        /// verified fail or token is null
+        /// code: 0
+        data.clear();
+        data.insert("message", "Verified fail or token is null");
+        emit getProfile(0, data);
+    }
+    else if(statusCode.value<int>() == 200)
+    {
+        QByteArray resData = reply->readAll();
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(resData);
+
+        data.clear();
+        data.insert("message", "Get user profile successfully");
+        data.insert("username", jsonDoc.object()["username"].toString());
+        data.insert("address", jsonDoc.object()["address"].toString());
+
+        /// Emit when successfully get user profile
+        /// code: 1
+        emit getProfile(1, data);
+    }
+    //! Final: clean up memory to avoid memory leak
     reply->deleteLater();
 }

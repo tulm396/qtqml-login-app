@@ -9,6 +9,7 @@ public:
     FileIO();
     static bool writeTokenToFile(const QString& fileName, const QString& data);
     static QString readTokenFromFile(const QString& source);
+    static void deleteTokenFile(const QString& source);
 };
 
 #endif // FILEIO_H

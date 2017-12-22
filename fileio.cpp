@@ -26,3 +26,8 @@ QString FileIO::readTokenFromFile(const QString &source)
     file.close();
     return QString(data);
 }
+
+void FileIO::deleteTokenFile(const QString &source)
+{
+    QFile::remove(source);
+}

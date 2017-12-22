@@ -18,7 +18,7 @@ Page {
                 spacing: 4;
                 anchors.horizontalCenter: parent.horizontalCenter;
                 Label { id: labelUsername; text: " "; }
-                Label { id: labelPassword; text: " "; }
+                Label { id: labelAddress; text: " "; }
             }
 
             Row {
@@ -30,7 +30,7 @@ Page {
                     text: "Get Your Profile";
                     smooth: true;
                     onClicked: {
-                        console.log("Button Get Profile clicked.");
+                        idMainController.getUserProfile();
                     }
                 }
                 RoundButton {
@@ -44,7 +44,24 @@ Page {
         }
     }
 
-    Component.onCompleted: {
-        labelTitle.text = qsTr("Hello! This is your page!");
+    // Create connections to signal from Main Controller
+    Connections {
+        target: idMainController;
+
+        onGetProfile: {
+            switch (flag) {
+                case -1:
+                    // For now, don't do anything more
+                    break;
+                case 0:
+                    // Authorization failed
+                    break;
+                case 1:
+                    // Request successfully and had data
+                    labelUsername.text = qsTr("Username: %1.").arg(data["username"]);
+                    labelAddress.text = qsTr("Address: %1.").arg(data["address"]);
+                    break;
+            }
+        }
     }
 }

@@ -32,7 +32,6 @@ Page {
                 TextField {
                     id: textFieldUsername;
                     width: 300;
-                    text: "tulm";
                     placeholderText: "tulm";
                     focus: true;
                 }
@@ -47,7 +46,6 @@ Page {
                 TextField {
                     id: textFieldPassword;
                     width: 300;
-                    text: "leminhtu";
                     placeholderText: "leminhtu";
                     echoMode: "Password";
                 }
